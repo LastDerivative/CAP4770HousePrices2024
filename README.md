@@ -28,7 +28,7 @@ It also makes predictions on a test dataset and computes the Logarithmic RMSE to
 To run the code, you will need to install the following dependencies:
 
 ```bash
-pip install pandas scikit-learn numpy matplotlib
+pip install pandas scikit-learn numpy matplotlib argparse datetime
 ```
 
 You will also need the following data files:
@@ -45,6 +45,7 @@ You will also need the following data files:
 - Model Training:
   - Trains a Gradient Boosting Regressor with specified hyperparameters
   - Trains a Neural Network using MinMaxScaler and MLPRegressor
+  - Trains a Stacked model that combines both the Gradient Boosting and Neural Networks
 - Model Evaluation:
   - Evaluates model performance using K-Fold Cross-Validation
   - Computes Mean Squared Error (MSE), Root Mean Squared Error (RMSE), and compares to a baseline
@@ -61,12 +62,67 @@ The script evaluates models using the following metrics:
 
 
 ## Results
-The script prints the following results:
-
+The code outputs the following results:
+- Predictions made by models ran in a format submittable to Kaggle
 - MSE and RMSE for each fold in cross-validation
 - Average MSE and RMSE
 - RMSE as a percentage of the average sale price
 - Comparison of model RMSE to a baseline RMSE
+
+```
+MSE scores for each fold: [6.63152554e+08 4.91717313e+08 4.91675384e+08 7.76904957e+08 6.05079971e+08]
+RMSE scores for each fold: [25751.74855413 22174.6998479  22173.75438609 27873.01484767 24598.37333298]
+Average MSE: 605706035.5682492
+Average RMSE: 24514.31819375379
+Average Sale Price: $180932.92
+Average RMSE: $24514.32
+RMSE as Percentage of Average Sale Price: 13.55%
+Baseline RMSE: $79467.79
+Model RMSE is better than baseline.
+Model Evaluation started at: 2024-07-30 22:05:50
+Model Evaluation finished at: 2024-07-30 22:13:17
+Total Evaluation execution time: 0:07:26.727285
+Logarithmic RMSE: 0.4167785842875396
+```
+
+\
+Able to specify which models to run by specifying with the following flags
+```
+--run_gb --run_nn --run_stacked --run_all
+```
+
+- *FullPipeline.py `--run_nn` will only run the nn model with evaluation*
+- *By default, evaluation of the stacked model is not run since total run time ~50 minutes*
+- *By default, evaluation of the Neural Model is not run since total run time ~50 minutes*
+
+\
+Able to specify stacked Evaluation when running the stacked model or all models with `--evaluate_stacked`. For example:
+```
+FullPipeline.py --run_all --evaluate_stacked or FullPipeline.py --run_stacked --evaluate_stacked
+```
+
+*`FullPipeline.py` by default runs the GB model and the Neural Network Model with evaluation on both. Total run time: ~10 minutes*
+
+\
+**Results of stacked Evaluation with outlier removal and aggressive preprocessing:**
+```
+Total Time: 50 minutes
+
+Total Training execution time: 0:10:24.215602
+Total Evaluation execution time: 0:40:07.320574
+
+MSE scores for each fold: [4.57695389e+08 4.78728189e+08 4.27827539e+08 6.84540074e+08 4.58626083e+08]
+RMSE scores for each fold: [21393.8165989  21879.85806529 20683.99232721 26163.71675458 21415.55703462]
+Average MSE: 501483454.7467955
+Average RMSE: 22307.38815612143
+Average Sale Price: $180932.92
+Average RMSE: $22307.39
+RMSE as Percentage of Average Sale Price: 12.33%
+Baseline RMSE: $79467.79
+Model RMSE is better than baseline.
+
+KAGGLE: 0.12942
+```
 
 
 ## License
